@@ -49,3 +49,6 @@ eagle.epf
 
 # file locks introduced since 7.x
 *.lck
+
+# File containing local Wifi credentials 
+software/src/wifiCredentials.h
