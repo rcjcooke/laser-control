@@ -14,7 +14,7 @@ static const uint8_t AA_CTL = D9;
 // Air Filter control pin
 static const uint8_t AF_CTL = D8;
 // The characters used for the "waiting" spinner on the display
-static const char WAITING_CHARS[5] = "-\\|/";
+static const char WAITING_CHARS[4] = {'-', '\\', '|', '/'};
 
 // RGB Blue
 static const unsigned char LCD_BLUE[] = {0, 0, 255};
