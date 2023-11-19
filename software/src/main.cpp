@@ -22,6 +22,8 @@ static const unsigned char LCD_BLUE[] = {0, 0, 255};
 static const unsigned char LCD_GREEN[] = {0, 255, 0};
 // RGB Red
 static const unsigned char LCD_RED[] = {255, 0, 0};
+// RGB Purple
+static const unsigned char LCD_PURPLE[] = {255, 0, 255};
 
 /************************
  * Variables
@@ -41,10 +43,10 @@ void setLCDColour(const unsigned char colour[]) {
 
 // Prints a spinner on the LCD, changing state every 250 ms
 void updateSpinner() {
-  unsigned long prevMillis = millis();
+  static unsigned long prevMillis = millis();
   static uint8_t spinnerCharNum = 0;
   // If it's been 250 ms since last time we checked, let us know we're still alive
-  if (millis() - prevMillis >= 250) {
+  if (millis() - prevMillis >= 200) {
     lcd.setCursor(0,1);
     lcd.print(WAITING_CHARS[spinnerCharNum++]);
     if (spinnerCharNum == 4) spinnerCharNum = 0;
@@ -125,13 +127,21 @@ void setup() {
   // Start up the display
   lcd.noCursor();
   lcd.noBlink();
-  lcd.begin(16, 2);  
+  lcd.begin(16, 2);
+  setLCDColour(LCD_PURPLE);
 
   // Atomstack Laser Cutters communicate at a baud rate of 115200 bps
+  lcd.setCursor(0,0);
+  lcd.print("Starting serial ");
   Serial.begin(115200);
-  while(!Serial); // Wait for initialisation of the serial interface
+  // Wait for initialisation of the serial interface
+  while(!Serial) {
+    updateSpinner();
+  }; 
 
   // Set up the Wifi connection
+  lcd.setCursor(0,0);
+  lcd.print("Starting WiFi   ");
   WiFi.begin(ssid, password);
 }
 
@@ -144,7 +154,7 @@ void loop() {
   const static int STATE_NO_WIFI_CONNECTION = 0;
   const static int STATE_WAITING_FOR_CLIENT_CONNECTION = 1;
   const static int GOT_CLIENT_CONNECTION = 2;
-  static int state = 0;
+  static int state = STATE_NO_WIFI_CONNECTION;
 
   // Check to see if we've dropped the connection
   if (WiFi.status() != WL_CONNECTED) {
